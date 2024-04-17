@@ -8,6 +8,15 @@ import React, {
 } from "react";
 import { CellInfo, CellPos, GroupManager } from "./Manager";
 import styles from "./index.module.less";
+import {
+  CELL_HEIGHT_BASE,
+  CELL_INTERVAL,
+  CELL_WIDTH,
+  VIEW_PORT_HEIGHT,
+  VIEW_PORT_WIDTH,
+  WATERFALL_CELL_COLUMN_COUNT,
+} from "./constant";
+import { randomColor, randomNumebr } from "./utils";
 
 interface ItemData extends CellInfo {
   key?: number;
@@ -38,7 +47,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   const [totalWidth, setTotalWidth] = useState<number>(0);
   const boxRef = useRef<HTMLDivElement>(null);
 
-  console.log(displayItems, "xxx");
+  // console.log(displayItems, "xxx");
 
   const boxStyle = useMemo(
     () => ({
@@ -66,7 +75,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     const { scrollLeft, scrollTop } = boxElement;
     const displayItems: DisplayItem[] = [];
 
-    console.log(groupManagers);
+    // console.log(groupManagers);
 
     groupManagers.forEach((groupManager: GroupManager, index: number) => {
       const indices = groupManager.getCellIndices({
@@ -193,25 +202,21 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 };
 
 export const VirtualWaterFallListInstance: FC = () => {
-  const viewPortHeight = 300;
-  const viewPortWidth = 400;
-  const randomColor = () => `color${(Math.random() * 8) >>> 0}`;
-  const line = 55;
-  const columnHeight = new Array(line).fill(0);
-  const collection: ItemData[] = new Array(10e3).fill("").map((_, index) => {
-    const column = index % line;
-    const height = 50 + 100 * Math.random();
+  const columnHeight = new Array(WATERFALL_CELL_COLUMN_COUNT).fill(0);
+  const collection: ItemData[] = new Array(2e4).fill("").map((_, index) => {
+    const columnIndex = index % WATERFALL_CELL_COLUMN_COUNT;
+    const cellHeight = randomNumebr(CELL_HEIGHT_BASE);
     const result = {
       data: {
         text: `#${index}`,
         color: randomColor(),
       },
-      height,
-      width: 75,
-      x: column * 85,
-      y: columnHeight[column],
+      height: cellHeight,
+      width: CELL_WIDTH,
+      x: columnIndex * (CELL_WIDTH + CELL_INTERVAL),
+      y: columnHeight[columnIndex],
     };
-    columnHeight[column] += height + 10;
+    columnHeight[columnIndex] += cellHeight + CELL_INTERVAL;
     return result;
   });
 
@@ -223,8 +228,8 @@ export const VirtualWaterFallListInstance: FC = () => {
 
   return (
     <VirtualWaterFallList
-      height={viewPortHeight}
-      width={viewPortWidth}
+      height={VIEW_PORT_HEIGHT}
+      width={VIEW_PORT_WIDTH}
       sectionSize={50}
       collection={collection}
       cellSizeAndPositionGetter={cellSizeAndPositionGetter}
