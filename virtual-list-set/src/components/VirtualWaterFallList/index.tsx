@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { CellInfo, CellPos, GroupManager } from "./Manager";
 import {
+  CACHE_SIZE,
   CELL_HEIGHT_BASE,
   CELL_INTERVAL,
   CELL_TOTAL_COUNT,
@@ -23,7 +24,7 @@ import { LayerManager } from "vcalc-wasm";
 
 import styles from "./index.module.less";
 
-const useJs = false;
+const useJs = true;
 
 interface ItemData extends CellInfo {
   key?: number;
@@ -97,17 +98,17 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
       let indices;
       if (useJs) {
         indices = groupManager.getCellIndices({
-          height,
-          width,
-          x: scrollLeft,
-          y: scrollTop,
+          height: height + 2 * CACHE_SIZE,
+          width: width + 2 * CACHE_SIZE,
+          x: Math.max(0, scrollLeft - CACHE_SIZE),
+          y: Math.max(0, scrollTop - CACHE_SIZE),
         });
       } else {
         indices = groupManager.get_cell_indices({
-          height,
-          width,
-          x: scrollLeft,
-          y: scrollTop,
+          height: height + 2 * CACHE_SIZE,
+          width: width + 2 * CACHE_SIZE,
+          x: Math.max(0, scrollLeft - CACHE_SIZE),
+          y: Math.max(0, scrollTop - CACHE_SIZE),
         });
 
         // const result = groupManager.test({
@@ -215,7 +216,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     if (!cellPos) return;
     const { width, height, x, y } = cellPos;
     return {
-      transform: `translateX(${x}px) translateY(${y}px)`,
+      transform: `translateX(${x}px) translateY(${y}px) translateZ(0)`,
       width: `${width}px`,
       height: `${height}px`,
     };

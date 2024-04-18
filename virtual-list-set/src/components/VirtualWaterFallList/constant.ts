@@ -21,3 +21,6 @@ export const SECTION_SIZE = 100;
 
 // 瀑布流个数
 export const CELL_TOTAL_COUNT = 2e4;
+
+// 缓存大小，用于增加缓存区
+export const CACHE_SIZE = 100;
