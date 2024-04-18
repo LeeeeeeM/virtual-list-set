@@ -10,8 +10,8 @@ pub struct LayerManager {
     pub section_size: u32,
     group: Vec<CellInfo>,
     section_manager: SectionManager,
-    total_height: f32,
-    total_width: f32,
+    pub total_height: f32,
+    pub total_width: f32,
 }
 
 #[wasm_bindgen]

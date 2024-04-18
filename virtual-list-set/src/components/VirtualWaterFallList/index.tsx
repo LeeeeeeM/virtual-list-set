@@ -10,6 +10,7 @@ import { CellInfo, CellPos, GroupManager } from "./Manager";
 import {
   CELL_HEIGHT_BASE,
   CELL_INTERVAL,
+  CELL_TOTAL_COUNT,
   CELL_WIDTH,
   SECTION_SIZE,
   VIEW_PORT_HEIGHT,
@@ -152,8 +153,12 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 
   const updateGridDimensions = useCallback(() => {
     const groupManagers = groupManagersRef.current || [];
-    const totalHeight = Math.max(...groupManagers.map((it) => it.totalHeight));
-    const totalWidth = Math.max(...groupManagers.map((it) => it.totalWidth));
+    const totalHeight = Math.max(
+      ...groupManagers.map((it) => (useJs ? it.totalHeight : it.total_height))
+    );
+    const totalWidth = Math.max(
+      ...groupManagers.map((it) => (useJs ? it.totalWidth : it.total_width))
+    );
     setTotalHeight(totalHeight);
     setTotalWidth(totalWidth);
   }, []);
@@ -184,7 +189,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
     groupManagersRef.current = groupManagers;
 
-    // updateGridDimensions();
+    updateGridDimensions();
     flushDisplayItems();
     return () => {
       groupManagersRef.current = [];
@@ -276,22 +281,24 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 
 export const VirtualWaterFallListInstance: FC = () => {
   const columnHeight = new Array(WATERFALL_CELL_COLUMN_COUNT).fill(0);
-  const collection: ItemData[] = new Array(2e4).fill("").map((_, index) => {
-    const columnIndex = index % WATERFALL_CELL_COLUMN_COUNT;
-    const cellHeight = randomNumebr(CELL_HEIGHT_BASE);
-    const result = {
-      data: {
-        text: `#${index}`,
-        color: color(3),
-      },
-      height: cellHeight,
-      width: CELL_WIDTH,
-      x: columnIndex * (CELL_WIDTH + CELL_INTERVAL),
-      y: columnHeight[columnIndex],
-    };
-    columnHeight[columnIndex] += cellHeight + CELL_INTERVAL;
-    return result;
-  });
+  const collection: ItemData[] = new Array(CELL_TOTAL_COUNT)
+    .fill("")
+    .map((_, index) => {
+      const columnIndex = index % WATERFALL_CELL_COLUMN_COUNT;
+      const cellHeight = randomNumebr(CELL_HEIGHT_BASE);
+      const result = {
+        data: {
+          text: `#${index}`,
+          color: color(3),
+        },
+        height: cellHeight,
+        width: CELL_WIDTH,
+        x: columnIndex * (CELL_WIDTH + CELL_INTERVAL),
+        y: columnHeight[columnIndex],
+      };
+      columnHeight[columnIndex] += cellHeight + CELL_INTERVAL;
+      return result;
+    });
 
   const cellSizeAndPositionGetter = useCallback((item: ItemData) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

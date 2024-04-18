@@ -17,4 +17,7 @@ export const CELL_INTERVAL = 10;
 export const CELL_HEIGHT_BASE = 50;
 
 // section 每个横纵切片大小，越小越精细
-export const SECTION_SIZE = 10;
+export const SECTION_SIZE = 100;
+
+// 瀑布流个数
+export const CELL_TOTAL_COUNT = 2e4;
