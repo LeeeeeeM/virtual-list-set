@@ -2,7 +2,6 @@ mod position;
 mod section;
 
 pub use position::{CellInfo, CellPosition, Point, SessionPosition};
-use serde::{Deserialize, Serialize};
 
 use section::Section;
 use std::collections::{HashMap, HashSet};
@@ -104,8 +103,8 @@ impl SectionManager {
         return section_list;
     }
 
-    pub fn get_inner(&mut self, pos: CellPosition) -> Result<JsValue, JsValue> {
-        // let r = self.collect_sections(pos);
+    pub fn get_inner(&mut self) -> Result<JsValue, JsValue> {
+        // let r = self.collect_sections(pos); pos: CellPosition
         // let r = self.sections_map.clone();
         let r = self.section_size;
         Ok(serde_wasm_bindgen::to_value(&r)?)

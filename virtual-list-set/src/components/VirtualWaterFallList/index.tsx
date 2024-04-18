@@ -16,13 +16,13 @@ import {
   VIEW_PORT_WIDTH,
   WATERFALL_CELL_COLUMN_COUNT,
 } from "./constant";
-import { randomColor, randomNumebr } from "./utils";
+import { randomNumebr, color } from "./utils";
 
 import { LayerManager } from "vcalc-wasm";
 
 import styles from "./index.module.less";
 
-const useJs = true;
+const useJs = false;
 
 interface ItemData extends CellInfo {
   key?: number;
@@ -282,7 +282,7 @@ export const VirtualWaterFallListInstance: FC = () => {
     const result = {
       data: {
         text: `#${index}`,
-        color: randomColor(),
+        color: color(3),
       },
       height: cellHeight,
       width: CELL_WIDTH,

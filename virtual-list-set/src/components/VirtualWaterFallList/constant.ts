@@ -16,5 +16,5 @@ export const CELL_INTERVAL = 10;
 // cell的高度基准
 export const CELL_HEIGHT_BASE = 50;
 
-// section 横纵切片个数
-export const SECTION_SIZE = 500;
+// section 每个横纵切片大小，越小越精细
+export const SECTION_SIZE = 10;

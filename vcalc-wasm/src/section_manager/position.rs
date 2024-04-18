@@ -25,7 +25,7 @@ pub struct Point(pub u32, pub u32);
 
 #[wasm_bindgen(getter_with_clone)]
 #[derive(Clone, PartialEq, Deserialize, Serialize)]
-struct CellData {
+pub struct CellData {
     pub text: String,
     pub color: String,
 }

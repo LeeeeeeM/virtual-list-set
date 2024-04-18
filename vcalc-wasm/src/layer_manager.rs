@@ -1,16 +1,13 @@
-use std::collections::HashMap;
-
 use crate::section_manager::{CellPosition, SectionManager};
 
 use super::section_manager::CellInfo;
-use serde::Serialize;
 use serde_json;
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct LayerManager {
-    section_size: u32,
+    pub section_size: u32,
     group: Vec<CellInfo>,
     section_manager: SectionManager,
     total_height: f32,
@@ -93,10 +90,10 @@ impl LayerManager {
         Ok(serde_wasm_bindgen::to_value(&r)?)
     }
 
-    pub fn test(&mut self, pos: JsValue) -> Result<JsValue, JsValue> {
-        let pos: CellPosition = serde_wasm_bindgen::from_value(pos).unwrap();
+    pub fn test(&mut self) -> Result<JsValue, JsValue> {
+        // let pos: CellPosition = serde_wasm_bindgen::from_value(pos).unwrap(); pos: JsValue
         // let r = self.section_manager.get_collect_sections(pos);
-        return self.section_manager.get_inner(pos);
+        return self.section_manager.get_inner();
         // let r = &self.group;
 
         // Ok(serde_wasm_bindgen::to_value(&r)?)
