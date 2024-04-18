@@ -20,7 +20,7 @@ import {
 } from "./constant";
 import { randomNumebr, color } from "./utils";
 
-import { LayerManager } from "vcalc-wasm";
+import { LayerManager } from "../../pkg";
 
 import styles from "./index.module.less";
 

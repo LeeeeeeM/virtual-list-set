@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.js";
-import init from "vcalc-wasm";
+import init from "./pkg";
 import "./index.css";
 
 init().then(() => {
