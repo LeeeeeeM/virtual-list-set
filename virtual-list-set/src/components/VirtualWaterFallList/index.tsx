@@ -7,16 +7,22 @@ import React, {
   useMemo,
 } from "react";
 import { CellInfo, CellPos, GroupManager } from "./Manager";
-import styles from "./index.module.less";
 import {
   CELL_HEIGHT_BASE,
   CELL_INTERVAL,
   CELL_WIDTH,
+  SECTION_SIZE,
   VIEW_PORT_HEIGHT,
   VIEW_PORT_WIDTH,
   WATERFALL_CELL_COLUMN_COUNT,
 } from "./constant";
 import { randomColor, randomNumebr } from "./utils";
+
+import { LayerManager } from "vcalc-wasm";
+
+import styles from "./index.module.less";
+
+const useJs = true;
 
 interface ItemData extends CellInfo {
   key?: number;
@@ -46,6 +52,15 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   const [totalHeight, setTotalHeight] = useState<number>(0);
   const [totalWidth, setTotalWidth] = useState<number>(0);
   const boxRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   const b = collection.map(({ data, ...rest }) => rest);
+  //   // console.log(b);
+  //   const a = new LayerManager(sectionSize, b);
+  //   a.init();
+  //   window.a = a;
+  //   // console.log(a);
+  // }, [collection, sectionSize]);
 
   // console.log(displayItems, "xxx");
 
@@ -78,19 +93,58 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     // console.log(groupManagers);
 
     groupManagers.forEach((groupManager: GroupManager, index: number) => {
-      const indices = groupManager.getCellIndices({
-        height,
-        width,
-        x: scrollLeft,
-        y: scrollTop,
-      });
-      indices.forEach((indice: number) => {
-        displayItems.push({
-          groupIndex: index,
-          itemIndex: indice,
-          key: displayItems.length,
-          ...groupManager.getItem(indice),
+      let indices;
+      if (useJs) {
+        indices = groupManager.getCellIndices({
+          height,
+          width,
+          x: scrollLeft,
+          y: scrollTop,
         });
+      } else {
+        indices = groupManager.get_cell_indices({
+          height,
+          width,
+          x: scrollLeft,
+          y: scrollTop,
+        });
+
+        // const result = groupManager.test({
+        //   height,
+        //   width,
+        //   x: scrollLeft,
+        //   y: scrollTop,
+        // });
+
+        // console.log(result);
+      }
+
+      // console.log(indices, height, width, scrollLeft, scrollTop);
+      indices.forEach((indice: number) => {
+        if (useJs) {
+          // console.log(groupManager.getItem(indice));
+          displayItems.push({
+            groupIndex: index,
+            itemIndex: indice,
+            key: displayItems.length,
+            ...groupManager.getItem(indice),
+          });
+        } else {
+          const item = groupManager.get_item(indice);
+          // console.log(item);
+          // 从rust里取值
+          const { data, height, width, x, y } = item;
+          displayItems.push({
+            groupIndex: index,
+            itemIndex: indice,
+            key: displayItems.length,
+            data,
+            height,
+            width,
+            x,
+            y,
+          });
+        }
       });
     });
     setDisplayItems(displayItems);
@@ -109,15 +163,28 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     const collectionGroups = collectionGroupsRef.current || [];
 
     collectionGroups.forEach(({ group }, index) => {
-      groupManagers.push(
-        new GroupManager(index, group, sectionSize, cellSizeAndPositionGetter)
-      );
+      let ref;
+
+      if (useJs) {
+        ref = new GroupManager(
+          index,
+          group,
+          sectionSize,
+          cellSizeAndPositionGetter
+        );
+      } else {
+        // console.log(group);
+        ref = new LayerManager(sectionSize, group);
+        ref.init();
+      }
+
+      groupManagers.push(ref);
     });
 
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
     groupManagersRef.current = groupManagers;
 
-    updateGridDimensions();
+    // updateGridDimensions();
     flushDisplayItems();
     return () => {
       groupManagersRef.current = [];
@@ -133,7 +200,13 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     const groupManagers = groupManagersRef.current || [];
     const groupManager = groupManagers[displayItem.groupIndex];
     if (!groupManager) return;
-    const cellPos = groupManager.getCell(displayItem.itemIndex);
+    let cellPos;
+    if (useJs) {
+      cellPos = groupManager.getCell(displayItem.itemIndex);
+    } else {
+      cellPos = groupManager.get_cell(displayItem.itemIndex);
+    }
+
     if (!cellPos) return;
     const { width, height, x, y } = cellPos;
     return {
@@ -230,7 +303,7 @@ export const VirtualWaterFallListInstance: FC = () => {
     <VirtualWaterFallList
       height={VIEW_PORT_HEIGHT}
       width={VIEW_PORT_WIDTH}
-      sectionSize={50}
+      sectionSize={SECTION_SIZE}
       collection={collection}
       cellSizeAndPositionGetter={cellSizeAndPositionGetter}
     />

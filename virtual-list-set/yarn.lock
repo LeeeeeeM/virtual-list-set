@@ -241,7 +241,7 @@
 
 "@rollup/rollup-linux-powerpc64le-gnu@4.14.3":
   version "4.14.3"
-  resolved "http://npm.fe.sensorsdata.cn/@rollup/rollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.14.3.tgz#494ba3b31095e9a45df9c3f646d21400fb631a95"
+  resolved "http://npm.fe.sensorsdata.cn/@rollup/rollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.14.3.tgz#494ba3b31095e9a45df9c3f326d21400fb631a95"
   integrity sha512-5aRjvsS8q1nWN8AoRfrq5+9IflC3P1leMoy4r2WjXyFqf3qcqsxRCfxtZIV58tCxd+Yv7WELPcO9mY9aeQyAmw==
 
 "@rollup/rollup-linux-riscv64-gnu@4.14.3":
@@ -327,7 +327,7 @@
 "@swc/core-win32-x64-msvc@1.4.14":
   version "1.4.14"
   resolved "http://npm.fe.sensorsdata.cn/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.4.14.tgz#f5a3b1a241708b0628a07458e5bedbf67a1b9595"
-  integrity sha512-FmZ4Tby4wW65K/36BKzmuu7mlq7cW5XOxzvufaSNVvQ5PN4OodAlqPjToe029oma4Av+ykJiif64scMttyNAzg==
+  integrity sha512-FmZ4Tby4wW65K/36BKzmuu7mlq7cW5XOxzvufaSNVvQ5PN4OodAlqPjToe029oma4Av+ykJiif32scMttyNAzg==
 
 "@swc/core@^1.3.100", "@swc/core@^1.3.107":
   version "1.4.14"
@@ -782,7 +782,7 @@ estraverse@^5.1.0, estraverse@^5.2.0:
 
 esutils@^2.0.2:
   version "2.0.3"
-  resolved "http://npm.fe.sensorsdata.cn/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
+  resolved "http://npm.fe.sensorsdata.cn/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef32"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:

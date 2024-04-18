@@ -2,6 +2,8 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable require-jsdoc */
 
+import { SECTION_SIZE } from "./constant";
+
 export interface CellInfo extends CellPos {
   data: { text: string; color: string };
 }
@@ -50,8 +52,6 @@ export class Section {
   }
 }
 
-const SECTION_SIZE = 600;
-
 class SectionManager {
   private sectionSize: number;
   private sections: Record<string, Section>;
@@ -82,7 +82,7 @@ class SectionManager {
             height: this.sectionSize,
             width: this.sectionSize,
             x: sectionX * this.sectionSize,
-            y: sectionY * this.sectionSize
+            y: sectionY * this.sectionSize,
           });
         }
         sections.push(this.sections[key]);
