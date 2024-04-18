@@ -24,7 +24,9 @@ import { LayerManager } from "vcalc-wasm";
 
 import styles from "./index.module.less";
 
-const useJs = true;
+const searchParams = new URLSearchParams(location.search);
+const jsParams = searchParams.get("useJs");
+const useJs = jsParams === "true" || jsParams === "";
 
 interface ItemData extends CellInfo {
   key?: number;
