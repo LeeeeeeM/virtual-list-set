@@ -12,4 +12,4 @@
 
 ![js](/imgs/js.png "js")
 
-### vite 版本有问题，锁到 5.2.8
+### 开发环境记得清理缓存 vite --force
