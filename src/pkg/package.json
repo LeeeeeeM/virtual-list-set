@@ -1,0 +1,14 @@
+{
+  "name": "vcalc-wasm",
+  "version": "0.1.0",
+  "files": [
+    "vcalc_wasm_bg.wasm",
+    "vcalc_wasm.js",
+    "vcalc_wasm.d.ts"
+  ],
+  "module": "vcalc_wasm.js",
+  "types": "vcalc_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
