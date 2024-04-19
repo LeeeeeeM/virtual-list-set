@@ -1,14 +1,16 @@
 import React from "react";
-// import { VirtualListInstance } from "./components/VirtualList";
-import { VirtualWaterFallListInstance } from "./components/VirtualWaterFallList";
+import { VirtualWaterFallListInstance as JS } from "./components/VirtualWaterFallList";
+import { VirtualWaterFallListInstance as WASM } from "./components/VirtualWaterFallListWasm";
 import "./App.css";
+
+const searchParams = new URLSearchParams(location.search);
+const jsParams = searchParams.get("useJs");
+const useJs = jsParams === "true" || jsParams === "";
+console.log(useJs);
 
 const App = () => (
   <>
-    <div className="app">
-      {/* <VirtualListInstance /> */}
-      <VirtualWaterFallListInstance />
-    </div>
+    <div className="app">{useJs ? <JS /> : <WASM />}</div>
   </>
 );
 export default App;

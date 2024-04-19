@@ -2,25 +2,8 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable require-jsdoc */
 
-import { SECTION_SIZE } from "./constant";
-
-export interface CellInfo extends CellPos {
-  data: { text: string; color: string };
-}
-
-export interface ContainerPos {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface CellPos {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import { SECTION_SIZE } from "../../constant";
+import { CellInfo, CellPos, ContainerPos } from "../../types";
 
 export class Section {
   height: number; // 分片高度

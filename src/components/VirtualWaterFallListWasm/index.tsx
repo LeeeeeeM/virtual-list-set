@@ -6,7 +6,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { GroupManager } from "./Manager";
 import {
   CACHE_SIZE,
   SECTION_SIZE,
@@ -14,7 +13,10 @@ import {
   VIEW_PORT_WIDTH,
 } from "../../constant";
 import { generateDatas } from "../../utils";
-import { CellInfo, CellPos, DisplayItem, ItemData } from "../../types";
+
+import { LayerManager } from "../../pkg";
+
+import { CellInfo, DisplayItem, ItemData } from "../../types";
 
 import styles from "./index.module.less";
 
@@ -23,7 +25,6 @@ interface VirtualWaterFallList {
   width: number;
   collection: ItemData[];
   sectionSize: number; // 贴片越小，视窗内使用的贴片越多，收集起来的越精细，但是消耗性能。贴片越大，视窗内贴片越小，可能会有无效的元素被渲染，不过可以做缓冲区域。要结合场景使用
-  cellSizeAndPositionGetter: (item: CellInfo, index: string) => CellPos;
 }
 
 const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
@@ -31,7 +32,6 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   width,
   collection,
   sectionSize,
-  cellSizeAndPositionGetter,
 }) => {
   const [displayItems, setDisplayItems] = useState<DisplayItem[]>([]);
   const [totalHeight, setTotalHeight] = useState<number>(0);
@@ -54,71 +54,69 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     [totalHeight, totalWidth]
   );
 
-  const groupManagersRef = useRef<GroupManager[] | null>(null);
+  const layerManagerRef = useRef<LayerManager | null>(null);
 
   const collectionGroupsRef = useRef<{ group: CellInfo[] }[]>([]);
 
   const flushDisplayItems = useCallback(() => {
     const boxElement = boxRef.current;
-    const groupManagers = groupManagersRef.current || [];
-    if (!boxElement) return;
+    const layerManager = layerManagerRef.current;
+    if (!boxElement || !layerManager) return;
     const { scrollLeft, scrollTop } = boxElement;
     const displayItems: DisplayItem[] = [];
 
-    // console.log(groupManagers);
+    const indices = layerManager.get_cell_indices({
+      height: height + 2 * CACHE_SIZE,
+      width: width + 2 * CACHE_SIZE,
+      x: Math.max(0, scrollLeft - CACHE_SIZE),
+      y: Math.max(0, scrollTop - CACHE_SIZE),
+    });
 
-    groupManagers.forEach((groupManager: GroupManager, index: number) => {
-      const indices = groupManager.getCellIndices({
-        height: height + 2 * CACHE_SIZE,
-        width: width + 2 * CACHE_SIZE,
-        x: Math.max(0, scrollLeft - CACHE_SIZE),
-        y: Math.max(0, scrollTop - CACHE_SIZE),
-      });
-
-      // console.log(indices, height, width, scrollLeft, scrollTop);
-      indices.forEach((indice: number) => {
-        // console.log(groupManager.getItem(indice));
-        displayItems.push({
-          groupIndex: index,
-          itemIndex: indice,
-          key: displayItems.length,
-          ...groupManager.getItem(indice),
-        });
+    // console.log(indices, height, width, scrollLeft, scrollTop);
+    indices.forEach((indice: number) => {
+      const item = layerManager.get_item(indice);
+      const { data, height, width, x, y } = item;
+      displayItems.push({
+        groupIndex: 0, // 取单层
+        itemIndex: indice,
+        key: displayItems.length,
+        data,
+        height,
+        width,
+        x,
+        y,
       });
     });
     setDisplayItems(displayItems);
   }, [height, width]);
 
   const updateGridDimensions = useCallback(() => {
-    const groupManagers = groupManagersRef.current || [];
-    const totalHeight = Math.max(...groupManagers.map((it) => it.totalHeight));
-    const totalWidth = Math.max(...groupManagers.map((it) => it.totalWidth));
+    const layerManager = layerManagerRef.current;
+    if (!layerManager) return;
+    const totalHeight = layerManager.total_height;
+    const totalWidth = layerManager.total_width;
     setTotalHeight(totalHeight);
     setTotalWidth(totalWidth);
   }, []);
 
   const handleCollectionChange = useCallback(() => {
-    const groupManagers: GroupManager[] = [];
-    const collectionGroups = collectionGroupsRef.current || [];
+    const collectionGroups = collectionGroupsRef.current;
 
-    collectionGroups.forEach(({ group }, index) => {
-      const ref = new GroupManager(
-        index,
-        group,
-        sectionSize,
-        cellSizeAndPositionGetter
-      );
+    if (!collectionGroups) return;
 
-      groupManagers.push(ref);
-    });
+    const layerManager = new LayerManager(
+      sectionSize,
+      collectionGroups[0].group
+    );
+    layerManager.init();
 
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
-    groupManagersRef.current = groupManagers;
+    layerManagerRef.current = layerManager;
 
     updateGridDimensions();
     flushDisplayItems();
     return () => {
-      groupManagersRef.current = [];
+      layerManagerRef.current = null;
     };
   }, [sectionSize]);
 
@@ -128,10 +126,9 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   }, [collection]);
 
   const getComputedStyle = useCallback((displayItem: DisplayItem) => {
-    const groupManagers = groupManagersRef.current || [];
-    const groupManager = groupManagers[displayItem.groupIndex];
-    if (!groupManager) return;
-    const cellPos = groupManager.getCell(displayItem.itemIndex);
+    const layerManager = layerManagerRef.current;
+    if (!layerManager) return;
+    const cellPos = layerManager.get_cell(displayItem.itemIndex);
 
     if (!cellPos) return;
     const { width, height, x, y } = cellPos;
@@ -203,19 +200,12 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 export const VirtualWaterFallListInstance: FC = () => {
   const collection = generateDatas();
 
-  const cellSizeAndPositionGetter = useCallback((item: ItemData) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { data, ...sizeAndPosition } = item;
-    return sizeAndPosition;
-  }, []);
-
   return (
     <VirtualWaterFallList
       height={VIEW_PORT_HEIGHT}
       width={VIEW_PORT_WIDTH}
       sectionSize={SECTION_SIZE}
       collection={collection}
-      cellSizeAndPositionGetter={cellSizeAndPositionGetter}
     />
   );
 };
