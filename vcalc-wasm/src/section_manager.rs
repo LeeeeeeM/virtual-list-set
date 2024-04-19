@@ -61,8 +61,8 @@ impl SectionManager {
 
         let bound = self.section_size;
 
-        for section_x in section_x_start..section_x_end {
-            for section_y in section_y_start..section_y_end {
+        for section_x in section_x_start..section_x_end + 1 {
+            for section_y in section_y_start..section_y_end + 1 {
                 let point = Point(section_x, section_y);
 
                 let section = self.sections_map.entry(point.clone()).or_insert_with(|| {

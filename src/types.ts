@@ -21,6 +21,6 @@ export interface ItemData extends CellInfo {
 }
 
 export interface DisplayItem extends ItemData {
-  groupIndex: number;
+  groupIndex?: number;
   itemIndex: number;
 }

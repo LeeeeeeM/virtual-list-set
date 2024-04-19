@@ -56,11 +56,12 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 
   const layerManagerRef = useRef<LayerManager | null>(null);
 
-  const collectionGroupsRef = useRef<{ group: CellInfo[] }[]>([]);
+  const collectionRef = useRef<CellInfo[]>([]);
 
   const flushDisplayItems = useCallback(() => {
     const boxElement = boxRef.current;
     const layerManager = layerManagerRef.current;
+    const collection = collectionRef.current || [];
     if (!boxElement || !layerManager) return;
     const { scrollLeft, scrollTop } = boxElement;
     const displayItems: DisplayItem[] = [];
@@ -72,19 +73,12 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
       y: Math.max(0, scrollTop - CACHE_SIZE),
     });
 
-    // console.log(indices, height, width, scrollLeft, scrollTop);
     indices.forEach((indice: number) => {
-      const item = layerManager.get_item(indice);
-      const { data, height, width, x, y } = item;
+      const item = collection[indice];
       displayItems.push({
-        groupIndex: 0, // 取单层
         itemIndex: indice,
-        key: displayItems.length,
-        data,
-        height,
-        width,
-        x,
-        y,
+        key: indice,
+        ...item,
       });
     });
     setDisplayItems(displayItems);
@@ -100,14 +94,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   }, []);
 
   const handleCollectionChange = useCallback(() => {
-    const collectionGroups = collectionGroupsRef.current;
-
-    if (!collectionGroups) return;
-
-    const layerManager = new LayerManager(
-      sectionSize,
-      collectionGroups[0].group
-    );
+    const layerManager = new LayerManager(sectionSize, collection);
     layerManager.init();
 
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
@@ -118,20 +105,15 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     return () => {
       layerManagerRef.current = null;
     };
-  }, [sectionSize]);
+  }, [sectionSize, collection]);
 
   useEffect(() => {
-    collectionGroupsRef.current = [{ group: collection }];
+    collectionRef.current = collection;
     handleCollectionChange();
   }, [collection]);
 
   const getComputedStyle = useCallback((displayItem: DisplayItem) => {
-    const layerManager = layerManagerRef.current;
-    if (!layerManager) return;
-    const cellPos = layerManager.get_cell(displayItem.itemIndex);
-
-    if (!cellPos) return;
-    const { width, height, x, y } = cellPos;
+    const { width, height, x, y } = displayItem;
     return {
       transform: `translateX(${x}px) translateY(${y}px) translateZ(0)`,
       width: `${width}px`,

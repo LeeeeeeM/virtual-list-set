@@ -65,8 +65,6 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     const { scrollLeft, scrollTop } = boxElement;
     const displayItems: DisplayItem[] = [];
 
-    // console.log(groupManagers);
-
     groupManagers.forEach((groupManager: GroupManager, index: number) => {
       const indices = groupManager.getCellIndices({
         height: height + 2 * CACHE_SIZE,
@@ -75,13 +73,12 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
         y: Math.max(0, scrollTop - CACHE_SIZE),
       });
 
-      // console.log(indices, height, width, scrollLeft, scrollTop);
       indices.forEach((indice: number) => {
         // console.log(groupManager.getItem(indice));
         displayItems.push({
           groupIndex: index,
           itemIndex: indice,
-          key: displayItems.length,
+          key: indice,
           ...groupManager.getItem(indice),
         });
       });
@@ -129,7 +126,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 
   const getComputedStyle = useCallback((displayItem: DisplayItem) => {
     const groupManagers = groupManagersRef.current || [];
-    const groupManager = groupManagers[displayItem.groupIndex];
+    const groupManager = groupManagers[displayItem.groupIndex!];
     if (!groupManager) return;
     const cellPos = groupManager.getCell(displayItem.itemIndex);
 

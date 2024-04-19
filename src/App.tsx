@@ -6,7 +6,6 @@ import "./App.css";
 const searchParams = new URLSearchParams(location.search);
 const jsParams = searchParams.get("useJs");
 const useJs = jsParams === "true" || jsParams === "";
-console.log(useJs);
 
 const App = () => (
   <>
