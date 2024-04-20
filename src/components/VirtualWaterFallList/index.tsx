@@ -56,7 +56,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
 
   const groupManagersRef = useRef<GroupManager[] | null>(null);
 
-  const collectionGroupsRef = useRef<{ group: CellInfo[] }[]>([]);
+  const collectionGroupsRef = useRef<CellInfo[]>([]);
 
   const flushDisplayItems = useCallback(() => {
     const boxElement = boxRef.current;
@@ -74,7 +74,6 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
       });
 
       indices.forEach((indice: number) => {
-        // console.log(groupManager.getItem(indice));
         displayItems.push({
           groupIndex: index,
           itemIndex: indice,
@@ -98,16 +97,13 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
     const groupManagers: GroupManager[] = [];
     const collectionGroups = collectionGroupsRef.current || [];
 
-    collectionGroups.forEach(({ group }, index) => {
-      const ref = new GroupManager(
-        index,
-        group,
-        sectionSize,
-        cellSizeAndPositionGetter
-      );
+    const ref = new GroupManager(
+      collectionGroups,
+      sectionSize,
+      cellSizeAndPositionGetter
+    );
 
-      groupManagers.push(ref);
-    });
+    groupManagers.push(ref);
 
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
     groupManagersRef.current = groupManagers;
@@ -120,7 +116,7 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   }, [sectionSize]);
 
   useEffect(() => {
-    collectionGroupsRef.current = [{ group: collection }];
+    collectionGroupsRef.current = collection;
     handleCollectionChange();
   }, [collection]);
 

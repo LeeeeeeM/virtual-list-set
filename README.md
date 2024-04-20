@@ -11,5 +11,3 @@
 ## js
 
 ![js](/imgs/js.png "js")
-
-### 开发环境记得清理缓存 vite --force

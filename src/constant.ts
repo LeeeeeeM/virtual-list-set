@@ -5,7 +5,7 @@ export const VIEW_PORT_HEIGHT = 500;
 export const VIEW_PORT_WIDTH = 800;
 
 // 瀑布流的总体列数
-export const WATERFALL_CELL_COLUMN_COUNT = 40;
+export const WATERFALL_CELL_COLUMN_COUNT = 60;
 
 // 每个CELL的宽度
 export const CELL_WIDTH = 20;
@@ -20,7 +20,7 @@ export const CELL_HEIGHT_BASE = 20;
 export const SECTION_SIZE = 25;
 
 // 瀑布流个数
-export const CELL_TOTAL_COUNT = 2e4;
+export const CELL_TOTAL_COUNT = 1e5;
 
 // 缓存大小，用于增加缓存区
 export const CACHE_SIZE = 0;

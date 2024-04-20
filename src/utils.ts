@@ -22,7 +22,7 @@ export const generateDatas = (): ItemData[] => {
       const result = {
         data: {
           text: `${index % 9}`,
-          color: color(3),
+          color: randomColor(),
         },
         height: cellHeight,
         width: CELL_WIDTH,

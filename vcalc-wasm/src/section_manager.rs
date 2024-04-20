@@ -92,7 +92,10 @@ impl SectionManager {
             }
         }
 
-        indices.into_iter().collect()
+        // 必须进行sort，不然返回的indice为乱序，影响react dom-diff，诱发多次reflow
+        let mut sorted_indices: Vec<u32> = indices.into_iter().collect();
+        sorted_indices.sort();
+        sorted_indices
     }
 
     pub fn get_collect_sections(&mut self, pos: CellPosition) -> Vec<Rc<RefCell<Section>>> {

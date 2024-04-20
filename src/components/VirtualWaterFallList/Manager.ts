@@ -98,7 +98,7 @@ class SectionManager {
 }
 
 class GroupManager {
-  groupId: number;
+  // groupId: number;
   sectionSize: number;
   group: CellInfo[];
   sectionManager: SectionManager;
@@ -107,12 +107,12 @@ class GroupManager {
   cellSizeAndPositionGetter: (pos: CellInfo, index: string) => CellPos;
 
   constructor(
-    groupId: number,
+    // groupId: number,
     group: CellInfo[],
     sectionSize: number,
     cellSizeAndPositionGetter: (pos: CellInfo, index: string) => CellPos
   ) {
-    this.groupId = groupId;
+    // this.groupId = groupId;
     this.sectionSize = sectionSize;
     this.totalHeight = 0;
     this.totalWidth = 0;
