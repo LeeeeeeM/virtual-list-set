@@ -33,12 +33,12 @@ pub struct CellData {
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize, PartialEq)]
 pub struct CellInfo {
-    pub x: f32,      // 当前瀑布流卡片x轴坐标
-    pub y: f32,      // 当前瀑布流卡片y轴坐标
-    pub width: f32,  // 当前瀑布流卡片宽度
+    pub x: f32,     // 当前瀑布流卡片x轴坐标
+    pub y: f32,     // 当前瀑布流卡片y轴坐标
+    pub width: f32, // 当前瀑布流卡片宽度
     pub height: f32, // 当前瀑布流卡片高度
-    #[serde(deserialize_with = "deserialize_data")]
-    data: CellData,
+                    // #[serde(deserialize_with = "deserialize_data")]
+                    // data: CellData,
 }
 
 fn deserialize_data<'de, D>(deserializer: D) -> Result<CellData, D::Error>
@@ -68,15 +68,15 @@ where
     })
 }
 
-#[wasm_bindgen]
-impl CellInfo {
-    #[wasm_bindgen(getter)]
-    pub fn data(&self) -> CellData {
-        self.data.clone()
-    }
+// #[wasm_bindgen]
+// impl CellInfo {
+//     #[wasm_bindgen(getter)]
+//     pub fn data(&self) -> CellData {
+//         self.data.clone()
+//     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_data(&mut self, data: CellData) {
-        self.data = data;
-    }
-}
+//     #[wasm_bindgen(setter)]
+//     pub fn set_data(&mut self, data: CellData) {
+//         self.data = data;
+//     }
+// }

@@ -94,7 +94,9 @@ const VirtualWaterFallList: FC<VirtualWaterFallList> = ({
   }, []);
 
   const handleCollectionChange = useCallback(() => {
-    const layerManager = new LayerManager(sectionSize, collection);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const compactCollection = collection.map(({ data, ...rest }) => rest);
+    const layerManager = new LayerManager(sectionSize, compactCollection);
     layerManager.init();
 
     // 需要重新设置一下, 如果为null, groupManagers的引用就是[], 和ref无关, 后续会引用错误
